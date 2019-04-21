@@ -32,13 +32,17 @@ namespace SQL_Injection
             }
             else
             {
+                int supId;
+                if (!int.TryParse(supplierId, out supId))
+                    throw new Exception("Cann't parse the SupplierId to integar");
+
                 var sqlProductSelectConnection = WebConfigurationManager.ConnectionStrings["ProductSelect"].ConnectionString;
 
                 //This part load products that are supplied by each supplier based on the supplier ID 
                 var sqlString = "Select ProductName, QuantityPerUnit, UnitPrice FROM Products where SupplierID = @supplierId ORDER BY UnitPrice ";
                 using (SqlCommand command = new SqlCommand(sqlString, new SqlConnection(sqlProductSelectConnection)))
                 {
-                    command.Parameters.AddWithValue("@supplierId", supplierId);
+                    command.Parameters.AddWithValue("@supplierId", supId);
                     command.Connection.Open();
                     gv_products.DataSource = command.ExecuteReader();
                     gv_products.DataBind();
