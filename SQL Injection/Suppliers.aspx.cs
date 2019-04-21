@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -34,9 +35,10 @@ namespace SQL_Injection
                 var sqlProductSelectConnection = WebConfigurationManager.ConnectionStrings["ProductSelect"].ConnectionString;
 
                 //This part load products that are supplied by each supplier based on the supplier ID 
-                var sqlString = string.Format("Select ProductName, QuantityPerUnit, UnitPrice FROM Products where SupplierID ={0} ORDER BY UnitPrice ", supplierId) ;
+                var sqlString = "Select ProductName, QuantityPerUnit, UnitPrice FROM Products where SupplierID = @supplierId ORDER BY UnitPrice ";
                 using (SqlCommand command = new SqlCommand(sqlString, new SqlConnection(sqlProductSelectConnection)))
                 {
+                    command.Parameters.AddWithValue("@supplierId", supplierId);
                     command.Connection.Open();
                     gv_products.DataSource = command.ExecuteReader();
                     gv_products.DataBind();
